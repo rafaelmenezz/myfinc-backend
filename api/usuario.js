@@ -43,7 +43,7 @@ module.exports = app => {
                 existsOrError(usuario.senha, usuario.confirmaSenha, "Senha não conferem")
                 const usuarioFromDB = await app.db('usuarios')
                     .where({ email: usuario.email }).first()
-                if (!usuario.codusuario) {
+                if (!usuario.cod) {
                     notExistsOrError(usuarioFromDB, 'Usuário já cadastrado')
                 }
             } catch (msg) {
