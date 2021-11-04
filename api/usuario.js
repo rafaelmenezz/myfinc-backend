@@ -11,9 +11,9 @@ module.exports = app => {
     //metodo post
     const save = async (req, res) => {
         const usuario = { ...req.body }
-        if (req.params.codusuario) usuario.codusuario = req.params.cod
+        if (req.params.cod) usuario.cod = req.params.cod
 
-        if (usuario.codusuario) {
+        if (usuario.cod) {
             try {
                 existsOrError(usuario.nome, "Nome não informado")
                 existsOrError(usuario.email, "E-mail não informado")
@@ -30,7 +30,7 @@ module.exports = app => {
                     telefone: usuario.telefone,
                     login: usuario.login
                 })
-                .where({ codusuario: usuario.codusuario })
+                .where({ cod: usuario.cod })
                 .then(_ => res.status(200).send('Dados do usuário alterado com sucesso!'))
                 .catch(err => res.status(500).send(err.message))
         } else {
@@ -52,8 +52,8 @@ module.exports = app => {
             usuario.senha = encryptPassword(req.body.senha)
             delete usuario.confirmaSenha
             app.db('usuarios')
-                .insert(usuario, 'codusuario').into('usuarios')
-                .then(codusuario => res.json(codusuario[0]))
+                .insert(usuario, 'cod').into('usuarios')
+                .then(cod => res.json(cod[0]))
                 .catch(err => res.status(500).send(err.message))
         }
 
@@ -61,17 +61,17 @@ module.exports = app => {
     // metodo get
     const get = (req, res) => {
         app.db('usuarios')
-            .select('codusuario', 'nome', 'login', 'telefone', 'email')
+            .select('cod', 'nome', 'login', 'telefone', 'email')
             .then(usuarios => res.json(usuarios))
             .catch(err => res.status(500).send(err))
     }
 
     //metodo getById
     const getById = (req, res) => {
-        const codusuario = req.params.id
+        const cod = req.params.id
         app.db('usuarios')
-            .select('codusuario', 'nome', 'login', 'telefone', 'email')
-            .where({ codusuario: codusuario })
+            .select('cod', 'nome', 'login', 'telefone', 'email')
+            .where({ cod: cod })
             .then(usuarios => res.json(usuarios))
             .catch(err => res.status(500).send(err))
     }

@@ -1,12 +1,12 @@
 exports.up = function (knex) {
 
    return knex.schema.createTable('montantes', table => {
-      table.increments('codmontante').primary()
-      table.string('formapagamento').notNull()
-      table.date('vencimento').notNull().defaultTo(knex.raw('CURRENT_DATE'))
+      table.increments('cod').primary()
+      table.string('forma_pagamento').notNull()
+      table.date('dt_vencimento').notNull().defaultTo(knex.raw('CURRENT_DATE'))
       table.decimal('valor').notNull()
       table.integer('codfinanca').notNull()
-      table.foreign('codfinanca').references('financas.codfinanca')
+      table.foreign('codfinanca').references('financas.cod')
 
    })
 
