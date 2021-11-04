@@ -18,4 +18,13 @@ module.exports = app => {
       //.all(app.config.passport.authenticate())
       .get(app.api.conta.getById)
       .put(app.api.conta.save)
+
+   app.route('/familias')
+      //.all(app.config.passport.authenticate())
+      .post(app.api.familia.save)
+      .put(app.api.familia.update)
+
+   app.route('/familias/:codconta')
+      //.all(app.config.passport.authenticate())
+      .get(app.api.familia.getById)
 }
