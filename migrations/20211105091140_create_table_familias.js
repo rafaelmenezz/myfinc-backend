@@ -1,3 +1,4 @@
+
 exports.up = function (knex) {
    return knex.schema.createTable('familias', table => {
       table.integer('codconta').notNull()
@@ -11,4 +12,3 @@ exports.up = function (knex) {
 exports.down = function (knex) {
    return knex.schema.dropTable('familias')
 };
-

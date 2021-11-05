@@ -1,3 +1,4 @@
+
 exports.up = function(knex) {
    return knex.schema.createTable('contas', table => {
       table.increments('cod').primary()

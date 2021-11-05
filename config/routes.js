@@ -27,4 +27,16 @@ module.exports = app => {
    app.route('/familias/:codconta')
       //.all(app.config.passport.authenticate())
       .get(app.api.familia.getById)
+
+   app.route('/financas')
+      //.all(app.config.passport.authenticate())
+      .post(app.api.financa.save)
+      .get(app.api.financa.get)
+
+   app.route('/financas/:cod')
+      //.all(app.config.passport.authenticate())
+      .post(app.api.financa.save)
+      .delete(app.api.financa.remove)
+      .get(app.api.financa.getById)
+
 }
