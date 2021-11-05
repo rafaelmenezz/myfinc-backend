@@ -6,13 +6,13 @@ module.exports = app => {
    //metodo post
    const save = async (req, res) => {
       const conta = { ...req.body }
-      if (req.params.cod) conta.cod = req.params.cod
 
       if (conta.cod) {
          try {
             existsOrError(conta.nome, "Nome não informado")
+
          } catch (msg) {
-            return res.status(400).send(msg)
+            return res.status(400).send(msg.message)
          }
          app.db('contas')
             .update({
@@ -39,6 +39,29 @@ module.exports = app => {
       }
 
    }
+   const remove = async (req, res) => {
+      try {
+
+
+
+         const financas = await app.db('financas')
+            .where({ codconta: req.params.cod })
+         notExistsOrError(financas, 'Não foi possível deletar familia. A familia possui finanças cadastrado.')
+
+         const familia = await app.db('familias')
+            .where({ codconta: req.params.cod })
+         notExistsOrError(familia, 'Não foi possível deletar familia. A familia possui menbros cadastrado.')
+
+         const rowDeleted = await app.db('contas')
+            .where({ cod: req.params.cod }).del()
+         existsOrError(rowDeleted, 'Familia não encontrada.')
+
+         res.status(200).send('Familia deletada com sucesso.')
+
+      } catch (msg) {
+         return res.status(400).send(msg)
+      }
+   }
    // metodo get
    const get = (req, res) => {
       app.db('contas')
@@ -56,5 +79,5 @@ module.exports = app => {
          .then(contas => res.json(contas))
          .catch(err => res.status(500).send(err))
    }
-   return { save, get, getById }
+   return { save, get, getById, remove }
 }

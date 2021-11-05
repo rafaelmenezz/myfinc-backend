@@ -32,9 +32,11 @@ module.exports = app => {
          let familia = {}
          const cod = req.params.codconta
          familia = await app.db('contas').select('cod', 'nome').where({ cod: cod }).first()
-         familia.menbros = await app.db('familias')
+         const result = await app.db('familias').count('codconta').where({ 'familias.codconta': cod }).first()
+         familia.qt_membros = parseInt(result.count)
+         familia.membros = await app.db('familias')
             .join('usuarios', 'familias.codusuario', 'usuarios.cod')
-            .select('usuarios.cod', 'usuarios.nome', 'usuarios.telefone', 'usuarios.email').where({ 'familias.codconta': cod })
+            .select('usuarios.cod', 'usuarios.nome', 'usuarios.telefone', 'usuarios.email', 'familias.admin').where({ 'familias.codconta': cod })
 
          res.json(familia)
       } catch (error) {

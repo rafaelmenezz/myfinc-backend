@@ -68,7 +68,7 @@ module.exports = app => {
 
     //metodo getById
     const getById = (req, res) => {
-        const cod = req.params.id
+        const cod = req.params.cod
         app.db('usuarios')
             .select('cod', 'nome', 'login', 'telefone', 'email')
             .where({ cod: cod })
