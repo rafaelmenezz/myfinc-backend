@@ -18,7 +18,6 @@ module.exports = app => {
                 existsOrError(usuario.nome, "Nome não informado")
                 existsOrError(usuario.email, "E-mail não informado")
                 existsOrError(usuario.telefone, "Telefone não informado")
-                existsOrError(usuario.login, "Login não informado")
                 existsOrError(usuario.senha, "Senha não informada")
             } catch (msg) {
                 return res.status(400).send(msg)
@@ -28,7 +27,6 @@ module.exports = app => {
                     nome: usuario.nome,
                     email: usuario.email,
                     telefone: usuario.telefone,
-                    login: usuario.login
                 })
                 .where({ cod: usuario.cod })
                 .then(_ => res.status(200).send('Dados do usuário alterado com sucesso!'))
@@ -37,7 +35,6 @@ module.exports = app => {
             try {
                 existsOrError(usuario.nome, "Nome não informado")
                 existsOrError(usuario.email, "E-mail não informado")
-                existsOrError(usuario.login, "Login não informado")
                 existsOrError(usuario.senha, "Senha não informada")
                 existsOrError(usuario.confirmaSenha, "Confirmação de Senha Inválida")
                 existsOrError(usuario.senha, usuario.confirmaSenha, "Senha não conferem")
@@ -53,27 +50,27 @@ module.exports = app => {
             delete usuario.confirmaSenha
             app.db('usuarios')
                 .insert(usuario, 'cod').into('usuarios')
-                .then(cod => res.json(cod[0]))
-                .catch(err => res.status(500).send(err.message))
+                .then(cod => res.json({ cod: cod[0] }))
+                .catch(err => res.status(500).send(err))
         }
 
     }
     // metodo get
     const get = (req, res) => {
         app.db('usuarios')
-            .select('cod', 'nome', 'login', 'telefone', 'email')
+            .select('cod', 'nome', 'telefone', 'email')
             .then(usuarios => res.json(usuarios))
-            .catch(err => res.status(500).send(err))
+            .catch(err => res.status(500).send('Falha no servidor!'))
     }
 
     //metodo getById
     const getById = (req, res) => {
         const cod = req.params.cod
         app.db('usuarios')
-            .select('cod', 'nome', 'login', 'telefone', 'email')
+            .select('cod', 'nome', 'telefone', 'email')
             .where({ cod: cod })
             .then(usuarios => res.json(usuarios))
-            .catch(err => res.status(500).send(err))
+            .catch(err => res.status(500).send('Falha no servidor!'))
     }
     return { save, get, getById }
 }

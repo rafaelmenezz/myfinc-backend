@@ -7,6 +7,7 @@ module.exports = app => {
    //metodo post
    const save = async (req, res) => {
       const financa = { ...req.body }
+      financa.codusuario = req.params.usuario
       if (req.params.cod) financa.cod = req.params.cod
 
       if (financa.cod) {
@@ -20,7 +21,7 @@ module.exports = app => {
             .update({
                descricao: financa.descricao,
                parentcod: financa.parentcod,
-               codconta: financa.codconta,
+               codfamilia: financa.codfamilia,
                codusuario: financa.codusuario
             })
             .where({ cod: financa.cod })
@@ -94,17 +95,19 @@ module.exports = app => {
    }
 
    const get = (req, res) => {
+      // const user = { ...req.body }
       app.db('financas')
+         .where({ codusuario: req.params.usuario })
          .then(financas => res.json(withPath(financas)))
          .catch(err => res.status(500).send(err))
    }
 
    const getById = (req, res) => {
       app.db('financas')
-         .where({ cod: req.params.cod })
+         .where({ cod: req.params.cod }).andWhere({ codusuario: req.params.usuario })
          .first()
-         .then(financa => res.json(financa))
-         .catch(err => res.status(500).send(err))
+         .then(financas => res.json(financas))
+         .catch(err => res.status(500).send(err.message))
    }
    return { save, remove, get, getById }
 }

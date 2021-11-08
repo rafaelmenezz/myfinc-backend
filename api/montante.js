@@ -12,7 +12,6 @@ module.exports = app => {
          try {
             existsOrError(montante.pagamento, "Forma de pagamento não informado!")
             existsOrError(montante.valor, "Valor não informado!")
-            existsOrError(montante.codfinanca, "Finança não informado!")
 
          } catch (msg) {
             return res.status(400).send(msg)
@@ -25,11 +24,11 @@ module.exports = app => {
                codfinanca: montante.codfinanca
             })
             .where({ cod: montante.cod })
-            .then(_ => res.status(200).send('Dados alterado com sucesso!'))
-            .catch(err => res.status(500).send(err.message))
+            .then(_ => res.status(200).send('Montante alterado com sucesso!'))
+            .catch(err => res.status(500).send('Falha no servidor!'))
       } else {
          try {
-            existsOrError(montante.pagamento, "Forma de pagamento não informado!")
+            existsOrError(montante.pagamento, "Pagamento não informado!")
             existsOrError(montante.valor, "Valor não informado!")
             existsOrError(montante.codfinanca, "Finança não informado!")
 
@@ -40,13 +39,13 @@ module.exports = app => {
          app.db('montantes')
             .insert(montante, 'cod').into('montantes')
             .then(cod => res.json(cod[0]))
-            .catch(err => res.status(500).send(err.message))
+            .catch(err => res.status(500).send('Falha no servidor!'))
       }
 
    }
    const remove = async (req, res) => {
       try {
-       
+
          const rowDeleted = await app.db('montantes')
             .where({ cod: req.params.cod }).del()
          existsOrError(rowDeleted, 'Dados não encontrado.')

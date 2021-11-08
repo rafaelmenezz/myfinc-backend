@@ -1,0 +1,1118 @@
+{
+   "openapi": "3.0.0",
+   "info": {
+      "title": "Projeto Intregrador USJ - Myfinc",
+      "description": "MyFinc - Aplicação de Gestão de Finanças pessoais.",
+      "contact": {
+         "email": "rafael.menezes@aluno.usj.edu.br"
+      },
+      "license": {
+         "name": "Apache 2.0",
+         "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+      },
+      "version": "1.0.1"
+   },
+   "servers": [
+      {
+         "url": "http://localhost:3000",
+         "description": "API de teste"
+      }
+   ],
+   "paths": {
+      "/signin/": {
+         "post": {
+            "summary": "Signin - Login",
+            "description": "Rota responsável por cadastrar para realizar login",
+            "tags": [
+               "Signin - Login"
+            ],
+            "requestBody": {
+               "content": {
+                  "application/json": {
+                     "schema": {
+                        "type": "object",
+                        "properties": {
+                           "login": {
+                              "type": "string"
+                           },
+                           "senha": {
+                              "type": "string"
+                           }
+                        }
+                     },
+                     "examples": {
+                        "usuario": {
+                           "value": {
+                              "login": "swagger",
+                              "senha": "1234"
+                           }
+                        }
+                     }
+                  }
+               }
+            },
+            "responses": {
+               "401": {
+                  "description": "Não autorizado!"
+               },
+               "400": {
+                  "description": "Dados informados estão incompletos"
+               },
+               "200": {
+                  "description": "Ok",
+                  "content": {
+                     "aplication/json": {
+                        "schema": {
+                           "type": "object",
+                           "$ref": "#/components/schemas/signin"
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      },
+      "/signup/": {
+         "post": {
+            "summary": "Signup - Cadastro de Usuário",
+            "description": "Rota responsável por cadastrar usuários",
+            "tags": [
+               "signup"
+            ],
+            "requestBody": {
+               "content": {
+                  "application/json": {
+                     "schema": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/signup"
+                     },
+                     "examples": {
+                        "usuario": {
+                           "value": {
+                              "nome": "Nome Usuário",
+                              "email": "user@user.com",
+                              "telefone": "48 99999999",
+                              "login": "menezes",
+                              "senha": "1234",
+                              "confirmaSenha": "1234"
+                           }
+                        }
+                     }
+                  }
+               }
+            },
+            "responses": {
+               "401": {
+                  "description": "Não autorizado!"
+               },
+               "400": {
+                  "description": "Dados informados estão incompletos"
+               },
+               "204": {
+                  "description": ""
+               }
+            }
+         }
+      },
+      "/usuarios/": {
+         "get": {
+            "summary": "Buscar todos os usuários",
+            "description": "Rota responsável por buscar todos os usuários",
+            "tags": [
+               "Usuários"
+            ],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Ok",
+                  "content": {
+                     "aplication/json": {
+                        "schema": {
+                           "type": "array",
+                           "items": {
+                              "$ref": "#/components/schemas/usuarios"
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      },
+      "/usuarios/{cod}": {
+         "get": {
+            "summary": "Busca usuário pelo código",
+            "description": "Rota responsável por buscar usuário pelo código",
+            "tags": [
+               "Usuários"
+            ],
+            "parameters": [
+               {
+                  "name": "cod",
+                  "in": "path",
+                  "description": "Buscar usuário pelo código",
+                  "required": true
+               }
+            ],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Ok",
+                  "content": {
+                     "aplication/json": {
+                        "schema": {
+                           "type": "object",
+                           "$ref": "#/components/schemas/usuarios"
+                        }
+                     }
+                  }
+               }
+            }
+         },
+         "put": {
+            "summary": "Altera dados do usuário",
+            "description": "Rota responsável por alterar dados do usuário informando o código",
+            "tags": [
+               "Usuários"
+            ],
+            "parameters": [
+               {
+                  "name": "cod",
+                  "in": "path",
+                  "description": "Alterar dados do usuário pelo código",
+                  "required": true
+               }
+            ],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "requestBody": {
+               "content": {
+                  "application/json": {
+                     "schema": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/usuarios"
+                     },
+                     "examples": {
+                        "usuario": {
+                           "value": {
+                              "nome": "Nome Usuário",
+                              "email": "user@user.com",
+                              "telefone": "48 99999999",
+                              "login": "menezes"
+                           }
+                        }
+                     }
+                  }
+               }
+            },
+            "responses": {
+               "500": {
+                  "description": "Falha no servidor!"
+               },
+               "401": {
+                  "description": "Não autorizado!"
+               },
+               "400": {
+                  "description": "Dados informados estão incompletos"
+               },
+               "200": {
+                  "description": "Dados do usuário alterado com sucesso!"
+               }
+            }
+         }
+      },
+      "/familias/": {
+         "post": {
+            "summary": "Cadastro de Conta/Familia",
+            "description": "Rota responsável por cadastrar familias",
+            "tags": [
+               "Famílias"
+            ],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "requestBody": {
+               "content": {
+                  "application/json": {
+                     "schema": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/contas"
+                     },
+                     "examples": {
+                        "usuario": {
+                           "value": {
+                              "nome": "Nome da familia"
+                           }
+                        }
+                     }
+                  }
+               }
+            },
+            "responses": {
+               "401": {
+                  "description": "Não autorizado!"
+               },
+               "400": {
+                  "description": "Nome da família não informado!"
+               },
+               "200": {
+                  "description": "Ok",
+                  "content": {
+                     "aplication/json": {
+                        "schema": {
+                           "type": "object",
+                           "properties": {
+                              "cod": {
+                                 "type": "number"
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         },
+         "get": {
+            "summary": "Buscar todas as contas/familias",
+            "description": "Rota responsável por buscar todos as contas/familias",
+            "tags": [
+               "Famílias"
+            ],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Ok",
+                  "content": {
+                     "aplication/json": {
+                        "schema": {
+                           "type": "array",
+                           "items": {
+                              "type": "object",
+                              "$ref": "#/components/schemas/contas"
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      },
+      "/familias/{cod}": {
+         "get": {
+            "summary": "Buscar familia pelo código",
+            "description": "Rota responsável pela busca da familia através do código.",
+            "tags": [
+               "Famílias"
+            ],
+            "parameters": [
+               {
+                  "name": "cod",
+                  "in": "path",
+                  "description": "Buscar conta/família pelo código",
+                  "required": true
+               }
+            ],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Ok",
+                  "content": {
+                     "aplication/json": {
+                        "schema": {
+                           "type": "object",
+                           "$ref": "#/components/schemas/familias"
+                        }
+                     }
+                  }
+               }
+            }
+         },
+         "put": {
+            "summary": "Alterar nome da familia informando o código",
+            "description": "Rota responsável por alterar nome da conta/familia informando o código.",
+            "tags": [
+               "Familias"
+            ],
+            "parameters": [
+               {
+                  "name": "cod",
+                  "in": "path",
+                  "description": "Alterar nome família através do código",
+                  "required": true
+               }
+            ],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "requestBody": {
+               "content": {
+                  "application/json": {
+                     "schema": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/familia"
+                     },
+                     "examples": {
+                        "usuario": {
+                           "value": {
+                              "nome": "Nome da familia"
+                           }
+                        }
+                     }
+                  }
+               }
+            },
+            "responses": {
+               "200": {
+                  "description": "Nome da fámilia alterado com sucesso!."
+               },
+               "400": {
+                  "description": "Nome da família não informado"
+               }
+            }
+         }
+      },
+      "/grupos/": {
+         "post": {
+            "summary": "Cadastro de usuarios na familia",
+            "description": "Rota responsável por cadastrar usuários na familia",
+            "tags": [
+               "Famílias"
+            ],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "requestBody": {
+               "content": {
+                  "application/json": {
+                     "schema": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/familias"
+                     },
+                     "examples": {
+                        "usuario": {
+                           "value": {
+                              "codconta": 0,
+                              "codusuario": 0,
+                              "admin": false
+                           }
+                        }
+                     }
+                  }
+               }
+            },
+            "responses": {
+               "401": {
+                  "description": "Não autorizado!"
+               },
+               "400": {
+                  "description": "Familia não informada! || Usuário não informado! "
+               },
+               "200": {
+                  "description": "Familia cadastrada com sucesso!"
+               }
+            }
+         },
+         "put": {
+            "summary": "Altera status do usuario na familia",
+            "description": "Rota responsável por alterar status do usuarios na familia",
+            "tags": [
+               "Famílias"
+            ],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "requestBody": {
+               "content": {
+                  "application/json": {
+                     "schema": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/familias"
+                     },
+                     "examples": {
+                        "familia": {
+                           "value": {
+                              "codconta": 0,
+                              "codusuario": 0,
+                              "admin": false
+                           }
+                        }
+                     }
+                  }
+               }
+            },
+            "responses": {
+               "401": {
+                  "description": "Não autorizado!"
+               },
+               "400": {
+                  "description": "Familia não informada! || Usuário não informado! "
+               },
+               "200": {
+                  "description": "Status do usuário alterado com sucesso!"
+               }
+            }
+         }
+      },
+      "/grupos/familias/{codfamilia}": {
+         "get": {
+            "summary": "Buscas família e seus membros pelo código da conta",
+            "description": "Rota responsável por família e seus membros pelo código da conta",
+            "tags": [
+               "Famílias"
+            ],
+            "parameters": [
+               {
+                  "name": "cod",
+                  "in": "path",
+                  "description": "Busca família e seus membros pelo código da conta",
+                  "required": true
+               }
+            ],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Ok",
+                  "content": {
+                     "aplication/json": {
+                        "schema": {
+                           "type": "array",
+                           "items": {
+                              "type": "object",
+                              "$ref": "#/components/schemas/membros"
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      },
+      "/grupos/usuarios/{codusuario}": {
+         "get": {
+            "summary": "Busca todas as famílias que o usuário possui",
+            "description": "Rota responsável por buscar todas as famílias de um usuário",
+            "tags": [
+               "Famílias"
+            ],
+            "parameters": [
+               {
+                  "name": "codusuario",
+                  "in": "path",
+                  "description": "Busca todas as famílias do usuário",
+                  "required": true
+               }
+            ],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Ok",
+                  "content": {
+                     "aplication/json": {
+                        "schema": {
+                           "type": "array",
+                           "items": {
+                              "type": "object",
+                              "$ref": "#/components/schemas/grupos"
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      },
+      "/{usuario}/financas/": {
+         "post": {
+            "summary": "Cadastro de finanças",
+            "description": "Rota responsável por cadastrar finanças",
+            "tags": [
+               "Finanças"
+            ],
+            "parameters": [
+               {
+                  "name": "usuario",
+                  "in": "path",
+                  "description": "Código do usuário",
+                  "required": true
+               }
+            ],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "requestBody": {
+               "content": {
+                  "application/json": {
+                     "schema": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/financas"
+                     },
+                     "examples": {
+                        "financa": {
+                           "value": {
+                              "descricao": "descrição"
+                           }
+                        },
+                        "com parent": {
+                           "value": {
+                              "descricao": "descrição",
+                              "parentcod": 0
+                           }
+                        }
+                     }
+                  }
+               }
+            },
+            "responses": {
+               "500": {
+                  "description": "Falha no servidor!"
+               },
+               "401": {
+                  "description": "Não autorizado!"
+               },
+               "400": {
+                  "description": "Descrição não informada! ou Código do usuário não informado!"
+               },
+               "200": {
+                  "description": "Ok"
+               }
+            }
+         },
+         "get": {
+            "summary": "Buscar todas as finanças do usuário com path",
+            "description": "Rota responsável por buscar financas do usuário",
+            "tags": [
+               "Finanças"
+            ],
+            "parameters": [
+               {
+                  "name": "usuario",
+                  "in": "path",
+                  "description": "Código do usuário",
+                  "required": true
+               }
+            ],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "responses": {
+               "500": {
+                  "description": "Falha no servidor!"
+               },
+               "401": {
+                  "description": "Não autorizado!"
+               },
+               "400": {
+                  "description": "Código do usuário não informado!"
+               },
+               "200": {
+                  "description": "Ok"
+               }
+            }
+         }
+      },
+      "/{usuario}/financas/{cod}": {
+         "put": {
+            "summary": "Update finanças",
+            "description": "Rota responsável por alterar dados da finança",
+            "tags": [
+               "Finanças"
+            ],
+            "parameters": [
+               {
+                  "name": "usuario",
+                  "in": "path",
+                  "description": "Código do usuário",
+                  "required": true
+               },
+               {
+                  "name": "cod",
+                  "in": "path",
+                  "description": "Código da finança",
+                  "required": true
+               }
+            ],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "requestBody": {
+               "content": {
+                  "application/json": {
+                     "schema": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/financas"
+                     },
+                     "examples": {
+                        "alterar descricao": {
+                           "value": {
+                              "descricao": "descrição"
+                           }
+                        },
+                        "financa": {
+                           "value": {
+                              "descricao": "descrição",
+                              "parentcod": 0,
+                              "codconta": 0,
+                              "codusuario": 0
+                           }
+                        }
+                     }
+                  }
+               }
+            },
+            "responses": {
+               "500": {
+                  "description": "Falha no servidor!"
+               },
+               "401": {
+                  "description": "Não autorizado!"
+               },
+               "400": {
+                  "description": "Descrição não informada! ou Código do usuário não informado!"
+               },
+               "200": {
+                  "description": "Ok"
+               }
+            }
+         },
+         "get": {
+            "summary": "Buscar todas as finanças do usuário",
+            "description": "Rota responsável por buscar financas do usuário",
+            "tags": [
+               "Finanças"
+            ],
+            "parameters": [
+               {
+                  "name": "usuario",
+                  "in": "path",
+                  "description": "Código do usuário",
+                  "required": true
+               },
+               {
+                  "name": "cod",
+                  "in": "path",
+                  "description": "Código da finança",
+                  "required": true
+               }
+            ],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "responses": {
+               "500": {
+                  "description": "Falha no servidor!"
+               },
+               "401": {
+                  "description": "Não autorizado!"
+               },
+               "400": {
+                  "description": "Código do usuário não informado!"
+               },
+               "200": {
+                  "description": "Ok"
+               }
+            }
+         }
+      },
+      "/montantes/": {
+         "post": {
+            "summary": "Cadastro de montandes",
+            "description": "Rota responsável por cadastrar montantes",
+            "tags": [
+               "Montantes"
+            ],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "requestBody": {
+               "content": {
+                  "application/json": {
+                     "schema": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/montantes"
+                     },
+                     "examples": {
+                        "montantes": {
+                           "value": {
+                              "pagamento": "pagamento",
+                              "dt_vencimento": "2021-11-15",
+                              "valor": 0,
+                              "codfinanca": 0
+                           }
+                        },
+                        "Sem data de vencimento": {
+                           "value": {
+                              "pagamento": "pagamento",
+                              "valor": 0,
+                              "codfinanca": 0
+                           }
+                        }
+                     }
+                  }
+               }
+            },
+            "responses": {
+               "401": {
+                  "description": "Não autorizado!"
+               },
+               "400": {
+                  "description": "Pagamentos, ou valor, ou código da finança não informado!"
+               },
+               "200": {
+                  "description": "Ok",
+                  "content": {
+                     "aplication/json": {
+                        "schema": {
+                           "type": "object",
+                           "properties": {
+                              "cod": {
+                                 "type": "number"
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         },
+         "get": {
+            "summary": "Buscar todos as montantes",
+            "description": "Rota responsável por buscar todos os montantes",
+            "tags": [
+               "Montantes"
+            ],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Ok",
+                  "content": {
+                     "aplication/json": {
+                        "schema": {
+                           "type": "array",
+                           "items": {
+                              "type": "object",
+                              "$ref": "#/components/schemas/montantes"
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      },
+      "/montantes/{cod}": {
+         "get": {
+            "summary": "Buscar montantes pelo código",
+            "description": "Rota responsável pela buscar montante através do código.",
+            "tags": [
+               "Montantes"
+            ],
+            "parameters": [
+               {
+                  "name": "cod",
+                  "in": "path",
+                  "description": "Buscar montante pelo código",
+                  "required": true
+               }
+            ],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Ok",
+                  "content": {
+                     "aplication/json": {
+                        "schema": {
+                           "type": "object",
+                           "$ref": "#/components/schemas/montantes"
+                        }
+                     }
+                  }
+               }
+            }
+         },
+         "put": {
+            "summary": "Alterar nome da montantes informando o código",
+            "description": "Rota responsável por alterar montantes informando o código.",
+            "tags": [
+               "montantes"
+            ],
+            "parameters": [
+               {
+                  "name": "cod",
+                  "in": "path",
+                  "description": "Código do montante",
+                  "required": true
+               }
+            ],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "requestBody": {
+               "content": {
+                  "application/json": {
+                     "schema": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/montante"
+                     },
+                     "examples": {
+                        "montante": {
+                           "value": {
+                              "pagamento": "Desposito - Caixa",
+                              "valor": "5000"
+                           }
+                        }
+                     }
+                  }
+               }
+            },
+            "responses": {
+               "200": {
+                  "description": "Nome da fámilia alterado com sucesso!."
+               },
+               "400": {
+                  "description": "Nome da família não informado"
+               },
+               "500": {
+                  "description": "Falha no servidor!"
+               }
+            }
+         }
+      }
+   },
+   "components": {
+      "schemas": {
+         "signin": {
+            "type": "object",
+            "properties": {
+               "cod": {
+                  "type": "number"
+               },
+               "nome": {
+                  "type": "string"
+               },
+               "login": {
+                  "type": "string"
+               },
+               "email": {
+                  "type": "string"
+               },
+               "telefone": {
+                  "type": "string"
+               },
+               "iat": {
+                  "type": "number"
+               },
+               "exp": {
+                  "type": "number"
+               },
+               "token": {
+                  "type": "string"
+               }
+            }
+         },
+         "signup": {
+            "type": "object",
+            "properties": {
+               "nome": {
+                  "type": "string"
+               },
+               "email": {
+                  "type": "string"
+               },
+               "telefone": {
+                  "type": "string"
+               },
+               "login": {
+                  "type": "string"
+               },
+               "senha": {
+                  "type": "string"
+               },
+               "confirmaSenha": {
+                  "type": "string"
+               }
+            }
+         },
+         "usuarios": {
+            "type": "object",
+            "properties": {
+               "cod": {
+                  "type": "number"
+               },
+               "nome": {
+                  "type": "string"
+               },
+               "email": {
+                  "type": "string"
+               },
+               "telefone": {
+                  "type": "string"
+               },
+               "login": {
+                  "type": "string"
+               }
+            }
+         },
+         "familias": {
+            "type": "object",
+            "properties": {
+               "cod": {
+                  "type": "number"
+               },
+               "nome": {
+                  "type": "string"
+               }
+            }
+         },
+         "grupo": {
+            "type": "object",
+            "properties": {
+               "codconta": {
+                  "type": "number"
+               },
+               "codusuario": {
+                  "type": "number"
+               },
+               "admin": {
+                  "type": "boolean"
+               }
+            }
+         },
+         "grupos": {
+            "type": "object",
+            "properties": {
+               "cod": {
+                  "type": "number"
+               },
+               "nome": {
+                  "type": "string"
+               },
+               "usuários": {
+                  "type": "array",
+                  "items": {
+                     "type": "object",
+                     "properties": {
+                        "cod": {
+                           "type": "number"
+                        },
+                        "nome": {
+                           "type": "string"
+                        },
+                        "telefone": {
+                           "type": "string"
+                        },
+                        "email": {
+                           "type": "string"
+                        },
+                        "admin": {
+                           "type": "boolean"
+                        }
+                     }
+                  }
+               }
+            }
+         },
+         "financas": {
+            "type": "object",
+            "properties": {
+               "cod": {
+                  "type": "number"
+               },
+               "descricao": {
+                  "type": "string"
+               },
+               "parentcod": {
+                  "type": "number"
+               },
+               "codconta": {
+                  "type": "number"
+               },
+               "codusuario": {
+                  "type": "number"
+               }
+            }
+         },
+         "montantes": {
+            "type": "object",
+            "properties": {
+               "cod": {
+                  "type": "number"
+               },
+               "pagamento": {
+                  "type": "string"
+               },
+               "dt_vencimento": {
+                  "type": "date"
+               },
+               "valor": {
+                  "type": "number"
+               },
+               "codfinanca": {
+                  "type": "number"
+               }
+            }
+         }
+      },
+      "securitySchemes": {
+         "bearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT"
+         }
+      }
+   }
+}
