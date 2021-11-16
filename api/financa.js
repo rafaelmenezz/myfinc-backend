@@ -1,46 +1,47 @@
 
+const queries = require('./queries')
 
 module.exports = app => {
    const { existsOrError, notExistsOrError } = app.api.validator
 
-
    //metodo post
    const save = async (req, res) => {
       const financa = { ...req.body }
-      financa.codusuario = req.params.usuario
-      if (req.params.cod) financa.cod = req.params.cod
 
-      if (financa.cod) {
-         try {
-            existsOrError(financa.descricao, "Descrição não informado!")
-            existsOrError(financa.codusuario, "Usuário não informado!")
-         } catch (msg) {
-            return res.status(400).send(msg)
-         }
-         app.db('financas')
-            .update({
-               descricao: financa.descricao,
-               parentcod: financa.parentcod,
-               codfamilia: financa.codfamilia,
-               codusuario: financa.codusuario
-            })
-            .where({ cod: financa.cod })
-            .then(_ => res.status(200).send('Dados da finanças alterado com sucesso!'))
-            .catch(err => res.status(500).send(err.message))
-      } else {
-         try {
-            existsOrError(financa.descricao, "Descricao não informado!")
-            existsOrError(financa.codusuario, "Usuário não informado!")
-         } catch (msg) {
-            return res.status(400).send(msg)
-         }
+      //  if (!financa.codfamilia) financa.codfamilia = 0
 
-         app.db('financas')
-            .insert(financa)
-            .then(_ => res.status(200).send('Finança ' + financa.descricao + ' cadastrada com sucesso!'))
-            .catch(err => res.status(500).send(err.message))
+      try {
+         existsOrError(financa.descricao, "Descricao não informado!")
+         existsOrError(financa.codusuario, "Usuário não informado!")
+         // const familiaFromDB = await app.db('familias')
+         //    .where({ cod: financa.codfamilia }).first()
+         // if (!familiaFromDB.cod) {
+         //    notExistsOrError(familiaFromDB, 'Familia não encontrada')
+         // }
+      } catch (msg) {
+         return res.status(400).send(msg)
       }
 
+      app.db('financas')
+         .insert(financa)
+         .then(_ => res.status(200).send('Finança ' + financa.descricao + ' cadastrada com sucesso!'))
+         .catch(err => res.status(500).send('Erro: ' + err.message))
+   }
+
+   const update = (req, res) => {
+      const financa = { ...req.body }
+
+      try {
+         existsOrError(financa.descricao, "Descrição não informado!")
+         existsOrError(financa.codusuario, "Usuário não informado!")
+      } catch (msg) {
+         return res.status(400).send(msg)
+      }
+      app.db('financas')
+         .update(financa)
+         .where({ cod: req.params.cod })
+         .then(_ => res.status(200).send('Dados da finanças alterado com sucesso!'))
+         .catch(err => res.status(500).send(err.message))
    }
 
    const remove = async (req, res) => {
@@ -94,10 +95,10 @@ module.exports = app => {
       return financasWithPath
    }
 
-   const get = (req, res) => {
+   const getFamilia = (req, res) => {
       // const user = { ...req.body }
       app.db('financas')
-         .where({ codusuario: req.params.usuario })
+         .where({ codfamilia: req.params.familia })
          .then(financas => res.json(withPath(financas)))
          .catch(err => res.status(500).send(err))
    }
@@ -109,5 +110,19 @@ module.exports = app => {
          .then(financas => res.json(financas))
          .catch(err => res.status(500).send(err.message))
    }
-   return { save, remove, get, getById }
+
+   const getByMontantes = async (req, res) => {
+      const financasCod = req.params.cod
+      const financas = await app.db.raw(queries.categoryWithChildren, financasCod)
+      const cods = financas.rows.map(c => c.cod)
+
+      app.db({ m: 'montantes', f: 'financas' })
+         .select('m.cod', 'm.pagamento', 'm.dt_vencimento', 'm.valor', { financa: 'f.descricao' })
+         .whereRaw('?? = ??', ['m.codfinanca', 'f.cod'])
+         .whereIn('parentcod', cods)
+         .orderBy('m.cod', 'desc')
+         .then(financas => res.json(financas))
+         .catch(err => res.status(500).send(err.message))
+   }
+   return { save, update, remove, getByMontantes }
 }

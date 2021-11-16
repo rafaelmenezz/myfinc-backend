@@ -1,7 +1,7 @@
 {
    "openapi": "3.0.0",
    "info": {
-      "title": "Projeto Intregrador USJ - Myfinc",
+      "title": "Backend - Projeto Intregrador USJ - Myfinc",
       "description": "MyFinc - Aplicação de Gestão de Finanças pessoais.",
       "contact": {
          "email": "rafael.menezes@aluno.usj.edu.br"
@@ -22,7 +22,7 @@
       "/signin/": {
          "post": {
             "summary": "Signin - Login",
-            "description": "Rota responsável por cadastrar para realizar login",
+            "description": "Rota responsável por realizar login informando email/senha",
             "tags": [
                "Signin - Login"
             ],
@@ -32,7 +32,7 @@
                      "schema": {
                         "type": "object",
                         "properties": {
-                           "login": {
+                           "email": {
                               "type": "string"
                            },
                            "senha": {
@@ -43,7 +43,7 @@
                      "examples": {
                         "usuario": {
                            "value": {
-                              "login": "swagger",
+                              "email": "swagger@swagger.com",
                               "senha": "1234"
                            }
                         }
@@ -52,11 +52,8 @@
                }
             },
             "responses": {
-               "401": {
-                  "description": "Não autorizado!"
-               },
                "400": {
-                  "description": "Dados informados estão incompletos"
+                  "description": "Informe o email e senha! | Usuário não cadastrado! | Email/senha inválidos!"
                },
                "200": {
                   "description": "Ok",
@@ -102,39 +99,19 @@
                }
             },
             "responses": {
-               "401": {
-                  "description": "Não autorizado!"
-               },
                "400": {
-                  "description": "Dados informados estão incompletos"
+                  "description": "Nome não informado! || Email não informado! || Telefone não informado! || Senha não informada! || Confirmação de Senha não informada! || Senha não conferem! || Usuário já cadastrado !"
                },
-               "204": {
-                  "description": ""
-               }
-            }
-         }
-      },
-      "/usuarios/": {
-         "get": {
-            "summary": "Buscar todos os usuários",
-            "description": "Rota responsável por buscar todos os usuários",
-            "tags": [
-               "Usuários"
-            ],
-            "security": [
-               {
-                  "bearerAuth": []
-               }
-            ],
-            "responses": {
                "200": {
                   "description": "Ok",
                   "content": {
                      "aplication/json": {
                         "schema": {
-                           "type": "array",
-                           "items": {
-                              "$ref": "#/components/schemas/usuarios"
+                           "type": "object",
+                           "properties": {
+                              "cod": {
+                                 "type": "number"
+                              }
                            }
                         }
                      }
@@ -174,6 +151,9 @@
                         }
                      }
                   }
+               },
+               "401": {
+                  "description": "Unauthorized"
                }
             }
          },
@@ -208,8 +188,7 @@
                            "value": {
                               "nome": "Nome Usuário",
                               "email": "user@user.com",
-                              "telefone": "48 99999999",
-                              "login": "menezes"
+                              "telefone": "48 99999999"
                            }
                         }
                      }
@@ -217,14 +196,11 @@
                }
             },
             "responses": {
-               "500": {
-                  "description": "Falha no servidor!"
-               },
                "401": {
                   "description": "Não autorizado!"
                },
                "400": {
-                  "description": "Dados informados estão incompletos"
+                  "description": "Nome não informado! || Email não informado!"
                },
                "200": {
                   "description": "Dados do usuário alterado com sucesso!"
@@ -944,9 +920,6 @@
                "nome": {
                   "type": "string"
                },
-               "login": {
-                  "type": "string"
-               },
                "email": {
                   "type": "string"
                },
@@ -1000,9 +973,6 @@
                   "type": "string"
                },
                "telefone": {
-                  "type": "string"
-               },
-               "login": {
                   "type": "string"
                }
             }

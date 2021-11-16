@@ -56,20 +56,6 @@ module.exports = app => {
          return res.status(400).send(msg)
       }
    }
-   // metodo get
-   const get = (req, res) => {
-      app.db('montantes')
-         .then(montantes => res.json(montantes))
-         .catch(err => res.status(500).send(err))
-   }
 
-   //metodo getById
-   const getById = (req, res) => {
-      const cod = req.params.cod
-      app.db('montantes')
-         .where({ cod: cod })
-         .then(montantes => res.json(montantes))
-         .catch(err => res.status(500).send(err))
-   }
-   return { save, get, getById, remove }
+   return { save, remove }
 }
