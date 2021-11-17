@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MyFinc/backend.git"
+    "url": "git+https://github.com/rafaelmenezz/myfinc-backend.git"
   },
   "author": "Rafael Menezes",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/MyFinc/backend/issues"
+    "url": "https://github.com/rafaelmenezz/myfinc-backend.git/issues"
   },
-  "homepage": "https://github.com/MyFinc/backend#readme",
+  "homepage": "https://github.com/rafaelmenezz/myfinc-backend.gits#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
     "consign": "^0.1.6",
