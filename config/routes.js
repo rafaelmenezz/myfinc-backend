@@ -57,4 +57,17 @@ module.exports = app => {
       .get(app.api.financa.getByMontantes)
       .delete(app.api.montante.remove)
 
+   app.route('/avisos')
+      .all(app.config.passport.authenticate())
+      .post(app.api.aviso.convidar)
+
+   app.route('/avisos/:cod')
+      .all(app.config.passport.authenticate())
+      .get(app.api.aviso.getByUserCod)
+      .delete(app.api.aviso.remove)
+
+   app.route('/avisos/:email')
+      .all(app.config.passport.authenticate())
+      .get(app.api.aviso.getByEmail)
+
 }
