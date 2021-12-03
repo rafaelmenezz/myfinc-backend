@@ -5,6 +5,7 @@ module.exports = app => {
 
    const save = async (req, res) => {
       const familia = { ...req.body }
+
       try {
          existsOrError(familia.nome, "Nome da familia não informado")
          existsOrError(familia.usuario.cod, "Usuário não informado")
@@ -31,7 +32,7 @@ module.exports = app => {
             codusuario: familia.usuario.cod,
             admin: familia.usuario.admin
          })
-         .then(_ => res.status(200).send('Familia cadastrada com sucesso!'))
+         .then(_ => res.json({ cod: familia.cod }))
          .catch(err => res.status(500).send('Error: ' + err.message))
    }
 
@@ -39,7 +40,7 @@ module.exports = app => {
    const update = async (req, res) => {
       const familia = { ...req.body }
       try {
-         existsOrError(familia.nome, "Nome não informado")
+         existsOrError(familia.nome, "Nome da família não informado")
          if (!familia.usuario.admin) {
             existsOrError(familia.usuario.admin, 'Você não é o administrador da família!')
          }
@@ -52,7 +53,7 @@ module.exports = app => {
             nome: familia.nome,
          })
          .where({ cod: familia.cod })
-         .then(_ => res.status(200).send('Nome da familia alterado com sucesso!'))
+         .then(_ => res.status(204).send())
          .catch(err => res.status(500).send('Error' + err.message))
    }
 
@@ -91,29 +92,24 @@ module.exports = app => {
    }
 
    const remove = async (req, res) => {
-      const familia = { ...req.body }
+
+      req.params.cod
 
       try {
-         existsOrError(familia.codfamilia, "Nome da familia não informado")
-         existsOrError(familia.codusuario, "Usuário não informado")
-         const userAdmin = await app.db('grupos')
-            .where({ codfamilia: familia.codfamilia }).andWhere({ codusuario: familia.codusuario }).first()
 
-         if (!userAdmin.admin) {
-            existsOrError(userAdmin.admin, "Você não é um administrador da familia!")
-         } else {
-            await app.db('financas')
-            update({ codfamilia: null })
-               .where({ codfamilia: familia.codfamilia }).del()
 
-            await app.db('grupos')
-               .where({ codfamilia: familia.codfamilia }).del()
+         await app.db('financas')
+            .update({ codfamilia: null })
+            .where({ codfamilia: req.params.cod }).del()
 
-            await app.db('familia')
-               .where({ cod: familia.codfamilia }).del()
+         await app.db('grupos')
+            .where({ codfamilia: req.params.cod }).del()
 
-            res.status(200).send('Familia deletada com sucesso.')
-         }
+         await app.db('familias')
+            .where({ cod: req.params.cod }).del()
+
+         res.status(204).send()
+
 
       } catch (msg) {
          return res.status(400).send('Error: ' + msg)

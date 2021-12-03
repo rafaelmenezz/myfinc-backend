@@ -1,15 +1,15 @@
 
 exports.up = function (knex) {
-   return knex.schema.createTable('tpavisos', table => {
+   return knex.schema.createTable('status', table => {
       table.increments('cod').primary()
       table.string('descricao').notNull()
    })
       .then(function (rows) {
-         return knex('tpavisos').insert([{ descricao: 'Sistema' }, { descricao: 'Mensagem' }, { descricao: 'Convites' }])
+         return knex('status').insert([{ descricao: 'Pedente' }, { descricao: 'Aceito' }, { descricao: 'Recusado' }])
       })
       .catch(function (error) { console.error(error); });
 }
 
 exports.down = function (knex) {
-   return knex.schema.dropTable('tpavisos')
+   return knex.schema.dropTable('status')
 };

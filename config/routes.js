@@ -42,11 +42,27 @@ module.exports = app => {
    app.route('/financas')
       .all(app.config.passport.authenticate())
       .post(app.api.financa.save)
-      .put(app.api.financa.update)
 
    app.route('/financas/:cod')
       .all(app.config.passport.authenticate())
       .put(app.api.financa.update)
+      .delete(app.api.financa.remove)
+
+   app.route('/financas/familias/:cod')
+      .all(app.config.passport.authenticate())
+      .get(app.api.financa.getFamilia)
+
+   app.route('/financas/familias/:codfamilia/usuario/:codusuario')
+      .all(app.config.passport.authenticate())
+      .get(app.api.financa.getUsuarioFamilia)
+
+   app.route('/montantes/familias/:cod')
+      .all(app.config.passport.authenticate())
+      .get(app.api.financa.getFamiliaMontantes)
+
+   app.route('/financas/usuarios/:cod')
+      .all(app.config.passport.authenticate())
+      .get(app.api.financa.getByUser)
 
    app.route('/montantes')
       .all(app.config.passport.authenticate())
@@ -54,20 +70,59 @@ module.exports = app => {
 
    app.route('/montantes/:cod')
       .all(app.config.passport.authenticate())
+      .put(app.api.montante.save)
       .get(app.api.financa.getByMontantes)
       .delete(app.api.montante.remove)
 
-   app.route('/avisos')
+   app.route('/relatorio/usuario/mes/:cod')
       .all(app.config.passport.authenticate())
-      .post(app.api.aviso.convidar)
+      .get(app.api.montante.getUsuarioMes)
 
-   app.route('/avisos/:cod')
+   app.route('/relatorio/usuario/mes/:cod/:codfamilia')
       .all(app.config.passport.authenticate())
-      .get(app.api.aviso.getByUserCod)
-      .delete(app.api.aviso.remove)
+      .get(app.api.montante.getUsuarioMes)
 
-   app.route('/avisos/:email')
+   app.route('/relatorio/usuario/:cod/familia/:codfamilia/mes/')
       .all(app.config.passport.authenticate())
-      .get(app.api.aviso.getByEmail)
+      .get(app.api.montante.getUsuarioFamiliaMes)
+
+   app.route('/relatorio/usuario/:cod/familia/:codfamilia/mes/:data')
+      .all(app.config.passport.authenticate())
+      .get(app.api.montante.getUsuarioFamiliaMes)
+
+   app.route('/relatorio/usuario/ano/')
+      .all(app.config.passport.authenticate())
+      .get(app.api.montante.getUsuarioAno)
+
+   app.route('/relatorio/familia/mes/:cod')
+      .all(app.config.passport.authenticate())
+      .get(app.api.montante.getFamiliaMes)
+
+   app.route('/relatorio/familia/mes/:cod/:data')
+      .all(app.config.passport.authenticate())
+      .get(app.api.montante.getFamiliaMes)
+
+
+   app.route('/relatorio/familia/ano/')
+      .all(app.config.passport.authenticate())
+      .get(app.api.montante.getFamiliaAno)
+
+   app.route('/convidar')
+      .all(app.config.passport.authenticate())
+      .post(app.api.convite.convidar)
+
+   app.route('/convites/:cod')
+      .all(app.config.passport.authenticate())
+      .get(app.api.convite.getConvites)
+      .delete(app.api.convite.remove)
+
+   app.route('/convites/aceitar/:cod')
+      .all(app.config.passport.authenticate())
+      .put(app.api.convite.aceitar)
+
+   app.route('/convites/recusar/:cod')
+      .all(app.config.passport.authenticate())
+      .put(app.api.convite.recusar)
+
 
 }
