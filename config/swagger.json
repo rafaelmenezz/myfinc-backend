@@ -18,10 +18,9 @@
          "description": "Desenvolvimento"
       },
       {
-         "url": "http://localhost:3000",
-         "description": "Desenvolvimento"
+         "url": "https://myfinc-backend.herokuapp.com/",
+         "description": "Produção"
       }
-
    ],
    "paths": {
       "/signup/": {
