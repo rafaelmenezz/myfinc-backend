@@ -102,10 +102,10 @@ module.exports = app => {
       const financas = {}
 
       financas.receitas = await app.db('financas')
-         .where({ codusuario: req.params.cod }).andWhere({ parentcod: 2 })
+         .where({ codusuario: req.params.cod }).andWhere({ codfamilia: null }).andWhere({ parentcod: 2 })
          .catch(err => res.status(500).send(err.message))
       financas.despesas = await app.db('financas')
-         .where({ codusuario: req.params.cod }).andWhere({ parentcod: 1 })
+         .where({ codusuario: req.params.cod }).andWhere({ codfamilia: null }).andWhere({ parentcod: 1 })
          .catch(err => res.status(500).send(err.message))
 
       res.json(financas)
@@ -125,6 +125,8 @@ module.exports = app => {
       res.json(financas)
 
    }
+
+
 
    const getUsuarioFamilia = async (req, res) => {
       const financas = {}

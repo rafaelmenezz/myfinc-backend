@@ -40,11 +40,11 @@ module.exports = app => {
       .get(app.api.grupo.getUsuario)
 
    app.route('/financas')
-      .all(app.config.passport.authenticate())
+      // .all(app.config.passport.authenticate())
       .post(app.api.financa.save)
 
    app.route('/financas/:cod')
-      .all(app.config.passport.authenticate())
+      // .all(app.config.passport.authenticate())
       .put(app.api.financa.update)
       .delete(app.api.financa.remove)
 
@@ -74,13 +74,14 @@ module.exports = app => {
       .get(app.api.financa.getByMontantes)
       .delete(app.api.montante.remove)
 
-   app.route('/relatorio/usuario/mes/:cod')
+   app.route('/relatorio/usuario/:cod/mes/')
       .all(app.config.passport.authenticate())
       .get(app.api.montante.getUsuarioMes)
 
-   app.route('/relatorio/usuario/mes/:cod/:codfamilia')
+   app.route('/relatorio/usuario/:cod/mes/:data')
       .all(app.config.passport.authenticate())
       .get(app.api.montante.getUsuarioMes)
+
 
    app.route('/relatorio/usuario/:cod/familia/:codfamilia/mes/')
       .all(app.config.passport.authenticate())
@@ -90,7 +91,7 @@ module.exports = app => {
       .all(app.config.passport.authenticate())
       .get(app.api.montante.getUsuarioFamiliaMes)
 
-   app.route('/relatorio/usuario/ano/')
+   app.route('/relatorio/usuario/:cod/ano/')
       .all(app.config.passport.authenticate())
       .get(app.api.montante.getUsuarioAno)
 

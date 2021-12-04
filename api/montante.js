@@ -18,13 +18,13 @@ module.exports = app => {
             return res.status(400).send(msg)
          }
          app.db('montantes')
-            .update({ 
-               cod: montante.cod, 
-               codfinanca: montante.codfinanca, 
+            .update({
+               cod: montante.cod,
+               codfinanca: montante.codfinanca,
                dt_vencimento: montante.dt_vencimento,
                pagamento: montante.pagamento,
                valor: montante.valor
-              })
+            })
             .where({ cod: montante.cod })
             .then(_ => res.status(200).send('Montante alterado com sucesso!'))
             .catch(err => res.status(500).send(err.message))
@@ -69,9 +69,8 @@ module.exports = app => {
          data = new Date()
          ano = data.getFullYear()
          mes = data.getMonth() + 1
-         console.log('aqui')
       }
-     
+
       let financas = {}
       financas.despesas = await app.db({ m: 'montantes' })
          .join({ f: 'financas' }, 'm.codfinanca', 'f.cod')
@@ -161,50 +160,18 @@ module.exports = app => {
 
    const getUsuarioAno = async (req, res) => {
 
-      const month = new Array();
-      month[0] = "Janeiro";
-      month[1] = "Fevereiro";
-      month[2] = "Março";
-      month[3] = "Abril";
-      month[4] = "Maio";
-      month[5] = "Junho";
-      month[6] = "Julho";
-      month[7] = "Agosto";
-      month[8] = "Setembro";
-      month[9] = "Outubro";
-      month[10] = "Novembro";
-      month[11] = "Dezembro";
+      const dt = new Date()
+      let financas ={}
+   
+      financas.totalreceitas = await app.db({ m: 'montantes' })
+         .join({ f: 'financas' }, 'm.codfinanca', 'f.cod')
+         .sum('m.valor as total')
+         .whereRaw('EXTRACT(year FROM dt_vencimento ) = ' + dt.getFullYear()).andWhere({ 'f.parentcod': 2 }).first()
 
-      const montante = { ...req.body }
-      const dt = new Date(montante.data)
-      let financas = {}
-      for (let i = 0; i < month.length; i++) {
-         let valor = await app.db.raw(
-            `SELECT
-               (SELECT sum(m.valor) 
-               FROM montantes m INNER JOIN financas f 
-               on m.codfinanca = f.cod
-               WHERE 
-               EXTRACT(year FROM dt_vencimento ) =  `+ dt.getFullYear() + `  
-                  AND EXTRACT(month FROM dt_vencimento ) = `+ (i + 1) + ` 
-                  AND f.parentcod = 1 AND codusuario = `+ montante.codusuario + ` ) 
-                  as despesas,
-               (SELECT sum(m.valor) FROM montantes m
-               INNER JOIN
-               financas f on m.codfinanca = f.cod
-               WHERE 
-               EXTRACT(year FROM m.dt_vencimento ) =  `+ dt.getFullYear() + `  
-               AND EXTRACT(month FROM m.dt_vencimento ) = `+ (i + 1) + ` 
-               AND f.parentcod = 2 AND f.codusuario =  `+ montante.codusuario + ` )
-               as Receitas`
-         )
-
-         financas[month[i]] = valor.rows[0]
-
-
-
-
-      }
+      financas.totaldespesas = await app.db({ m: 'montantes' })
+         .join({ f: 'financas' }, 'm.codfinanca', 'f.cod')
+         .sum('m.valor as total')
+         .whereRaw('EXTRACT(year FROM dt_vencimento ) = ' + dt.getFullYear()).andWhere({ 'f.parentcod': 1 }).first()
 
       res.status(200).send(financas)
    }
