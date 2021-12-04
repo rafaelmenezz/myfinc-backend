@@ -1,4 +1,4 @@
-const { authSecret } = require('process.env.authSecret')
+const { authSecret } = process.env.authSecret
 const passport = require('passport')
 const passportJwt = require('passport-jwt')
 const { Strategy, ExtractJwt } = passportJwt
