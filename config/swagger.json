@@ -15,8 +15,13 @@
    "servers": [
       {
          "url": "http://localhost:3000",
-         "description": "API de teste"
+         "description": "Desenvolvimento"
+      },
+      {
+         "url": "http://localhost:3000",
+         "description": "Desenvolvimento"
       }
+
    ],
    "paths": {
       "/signup/": {
