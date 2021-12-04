@@ -4,6 +4,7 @@ const { db } = require('./.env')
 
 module.exports = {
 
+  client:{ 
   development: {
     client: 'postgresql',
     version: '8.6.0',
@@ -31,6 +32,6 @@ module.exports = {
       tableName: 'knex_migrations'
     }
   }
-
+}
 
 };
