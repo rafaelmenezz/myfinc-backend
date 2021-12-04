@@ -1,2 +1,1 @@
-web: knex migrate:latest  
-web: node index.js
+web: knex migrate:latest node index.js
