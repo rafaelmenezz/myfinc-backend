@@ -23,17 +23,13 @@ module.exports = app => {
    const getUsuario = async (req, res) => {
 
       const cod = req.params.cod
-      let usuario = {}
+      let familias = {}
       try {
 
-         usuario = await app.db('usuarios')
-            .select('cod', 'nome', 'email', 'telefone')
-            .where({ cod: cod }).first()
-
-         usuario.familias = await app.db('grupos')
+         familias = await app.db('grupos')
             .join('familias', 'grupos.codfamilia', 'familias.cod')
-            .select('familias.cod', 'familias.nome').where({ 'grupos.codusuario': cod }).groupBy('familias.cod')
-         res.json(usuario)
+            .select('familias.cod', 'familias.nome', 'grupos.admin').where({ 'grupos.codusuario': cod })
+         res.json(familias)
       } catch (error) {
          res.status(500).send('Error: ' + error)
       }

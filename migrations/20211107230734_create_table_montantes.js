@@ -9,6 +9,7 @@ exports.up = function (knex) {
       table.integer('codfinanca').notNull()
       table.foreign('codfinanca').references('financas.cod')
 
+
    })
 
 };

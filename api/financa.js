@@ -8,23 +8,17 @@ module.exports = app => {
    const save = async (req, res) => {
       const financa = { ...req.body }
 
-      //  if (!financa.codfamilia) financa.codfamilia = 0
-
       try {
          existsOrError(financa.descricao, "Descricao não informado!")
          existsOrError(financa.codusuario, "Usuário não informado!")
-         // const familiaFromDB = await app.db('familias')
-         //    .where({ cod: financa.codfamilia }).first()
-         // if (!familiaFromDB.cod) {
-         //    notExistsOrError(familiaFromDB, 'Familia não encontrada')
-         // }
+         existsOrError(financa.parentcod, "Tipo de finança não informado!")
+
       } catch (msg) {
          return res.status(400).send(msg)
       }
-
       app.db('financas')
-         .insert(financa)
-         .then(_ => res.status(200).send('Finança ' + financa.descricao + ' cadastrada com sucesso!'))
+         .insert(financa, 'cod').into('financas')
+         .then(cod => res.json({ cod: cod[0] }))
          .catch(err => res.status(500).send('Erro: ' + err.message))
    }
 
@@ -33,12 +27,13 @@ module.exports = app => {
 
       try {
          existsOrError(financa.descricao, "Descrição não informado!")
-         existsOrError(financa.codusuario, "Usuário não informado!")
       } catch (msg) {
          return res.status(400).send(msg)
       }
       app.db('financas')
-         .update(financa)
+         .update({
+            descricao: financa.descricao
+         })
          .where({ cod: req.params.cod })
          .then(_ => res.status(200).send('Dados da finanças alterado com sucesso!'))
          .catch(err => res.status(500).send(err.message))
@@ -95,34 +90,147 @@ module.exports = app => {
       return financasWithPath
    }
 
-   const getFamilia = (req, res) => {
-      // const user = { ...req.body }
+   const getById = (req, res) => {
       app.db('financas')
-         .where({ codfamilia: req.params.familia })
+         .select('cod', 'descricao', 'parentcod')
+         .where({ codusuario: req.params.cod }).orWhere({ codusuario: null })
          .then(financas => res.json(withPath(financas)))
          .catch(err => res.status(500).send(err))
    }
 
-   const getById = (req, res) => {
-      app.db('financas')
-         .where({ cod: req.params.cod }).andWhere({ codusuario: req.params.usuario })
-         .first()
-         .then(financas => res.json(financas))
+   const getByUser = async (req, res) => {
+      const financas = {}
+
+      financas.receitas = await app.db('financas')
+         .where({ codusuario: req.params.cod }).andWhere({ parentcod: 2 })
          .catch(err => res.status(500).send(err.message))
+      financas.despesas = await app.db('financas')
+         .where({ codusuario: req.params.cod }).andWhere({ parentcod: 1 })
+         .catch(err => res.status(500).send(err.message))
+
+      res.json(financas)
+
+   }
+
+   const getFamilia = async (req, res) => {
+      const financas = {}
+
+      financas.receitas = await app.db('financas')
+         .where({ codfamilia: req.params.cod }).andWhere({ parentcod: 2 })
+         .catch(err => res.status(500).send(err.message))
+      financas.despesas = await app.db('financas')
+         .where({ codfamilia: req.params.cod }).andWhere({ parentcod: 1 })
+         .catch(err => res.status(500).send(err.message))
+
+      res.json(financas)
+
+   }
+
+   const getUsuarioFamilia = async (req, res) => {
+      const financas = {}
+
+      financas.receitas = await app.db('financas')
+         .where({ codfamilia: req.params.codfamilia }).andWhere({ codusuario: req.params.codusuario }).andWhere({ parentcod: 2 })
+         .catch(err => res.status(500).send(err.message))
+      financas.despesas = await app.db('financas')
+         .where({ codfamilia: req.params.codfamilia }).andWhere({ codusuario: req.params.codusuario }).andWhere({ parentcod: 1 })
+         .catch(err => res.status(500).send(err.message))
+
+      res.json(financas)
+
+   }
+
+   const getFamiliaMontantes = async (req, res) => {
+
+      const financas = {}
+
+
+      // financas.receitas = await app.db('financas')
+      //    .where({ codfamilia: req.params.cod }).andWhere({ parentcod: 2 })
+      //    .catch(err => res.status(500).send(err.message))
+      // financas.despesas = await app.db('financas')
+      //    .where({ codfamilia: req.params.cod }).andWhere({ parentcod: 1 })
+      //    .catch(err => res.status(500).send(err.message))
+
+      // financas.despesas = await app.db({ f: 'financas' })
+      //    .join({ m: 'montantes' }, 'f.cod', 'm.codfinanca')
+      //    .join({ u: 'usuarios' }, 'f.codusuario', 'u.cod')
+      //    .select('f.cod', 'f.descricao', 'u.cod', 'u.nome', 'u.email', 'm.pagamento', 'm.dt_vencimento', 'm.valor')
+      //    .where({ 'f.codfamilia': req.params.cod }).andWhere({ parentcod: 1 })
+      //    .catch(err => res.status(500).send(err.message))
+
+      financas.receitas = await app.db({ f: 'financas' })
+         .join({ m: 'montantes' }, 'f.cod', 'm.codfinanca')
+         .join({ u: 'usuarios' }, 'f.codusuario', 'u.cod')
+         .select('f.cod', 'f.descricao', 'u.cod', 'u.nome', 'u.email', 'm.pagamento', 'm.dt_vencimento', 'm.valor')
+         .where({ 'f.codfamilia': req.params.cod }).andWhere({ parentcod: 2 })
+         .catch(err => res.status(500).send(err.message))
+
+      financas.despesas = await app.db({ f: 'financas' })
+         .join({ m: 'montantes' }, 'f.cod', 'm.codfinanca')
+         .join({ u: 'usuarios' }, 'f.codusuario', 'u.cod')
+         .select('f.cod', 'f.descricao', 'u.cod', 'u.nome', 'u.email', 'm.pagamento', 'm.dt_vencimento', 'm.valor')
+         .where({ 'f.codfamilia': req.params.cod }).andWhere({ parentcod: 1 })
+         .catch(err => res.status(500).send(err.message))
+
+      res.json(financas)
+   }
+
+   const getByUsuario = async (req, res) => {
+      const financas = {}
+
+      financas.receitas = await app.db({ f: 'financas' })
+         .join({ m: 'montantes' }, 'f.cod', 'm.codfinanca')
+         .join({ u: 'usuarios' }, 'f.codusuario', 'u.cod')
+         .select('f.cod', 'f.descricao', 'm.pagamento', 'm.dt_vencimento', 'm.valor')
+         .where({ codusuario: req.params.cod }).andWhere({ parentcod: 2 })
+         .catch(err => res.status(500).send(err.message))
+
+      financas.despesas = await app.db({ f: 'financas' })
+         .join({ m: 'montantes' }, 'f.cod', 'm.codfinanca')
+         .join({ u: 'usuarios' }, 'f.codusuario', 'u.cod')
+         .select('f.cod', 'f.descricao', 'm.pagamento', 'm.dt_vencimento', 'm.valor')
+         .where({ 'f.codusuario': req.params.cod }).andWhere({ parentcod: 1 })
+         .catch(err => res.status(500).send(err.message))
+
+      res.json(financas)
    }
 
    const getByMontantes = async (req, res) => {
-      const financasCod = req.params.cod
-      const financas = await app.db.raw(queries.categoryWithChildren, financasCod)
+      await app.db({ m: 'montantes' })
+         .join({ f: 'financas' }, 'm.codfinanca', 'f.cod')
+         .select('m.cod as codmontante', 'f.cod as codfinanca', 'f.descricao', 'm.pagamento', 'm.dt_vencimento', 'm.valor')
+         .where({ 'm.cod': req.params.cod }).first()
+         .then(financas => res.json(financas))
+         .catch(err => res.status(500).send(err.message))
+
+   }
+
+   const getByDespesas = async (req, res) => {
+      const financas = await app.db.raw(queries.categoryWithChildren, 1)
       const cods = financas.rows.map(c => c.cod)
 
       app.db({ m: 'montantes', f: 'financas' })
          .select('m.cod', 'm.pagamento', 'm.dt_vencimento', 'm.valor', { financa: 'f.descricao' })
          .whereRaw('?? = ??', ['m.codfinanca', 'f.cod'])
+         .where({ 'm.codfamilia': req.params.cod })
          .whereIn('parentcod', cods)
          .orderBy('m.cod', 'desc')
          .then(financas => res.json(financas))
          .catch(err => res.status(500).send(err.message))
    }
-   return { save, update, remove, getByMontantes }
+   const getByReceitas = async (req, res) => {
+      const financas = await app.db.raw(queries.categoryWithChildren, 2)
+      const cods = financas.rows.map(c => c.cod)
+
+      app.db({ m: 'montantes', f: 'financas' })
+         .select('m.cod', 'm.pagamento', 'm.dt_vencimento', 'm.valor', { financa: 'f.descricao' })
+         .whereRaw('?? = ??', ['m.codfinanca', 'f.cod'])
+         .where({ 'm.codusuario': req.params.cod })
+         .whereIn('parentcod', cods)
+         .orderBy('m.cod', 'desc')
+         .then(financas => res.json(financas))
+         .catch(err => res.status(500).send(err.message))
+   }
+   return { save, update, remove, getByMontantes, getFamilia, getById, getByUser, getByMontantes, getFamiliaMontantes, getUsuarioFamilia }
 }
